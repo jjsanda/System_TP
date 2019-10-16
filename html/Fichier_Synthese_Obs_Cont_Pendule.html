@@ -1,0 +1,423 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Synth&egrave;se des lois de commande Observateur/Controleur du Pendule Rotatif</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-03-26"><meta name="DC.source" content="Fichier_Synthese_Obs_Cont_Pendule.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Synth&egrave;se des lois de commande Observateur/Controleur du Pendule Rotatif</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Les objectifs</a></li><li><a href="#2">Fichiers fournis et travail &agrave; r&eacute;aliser</a></li><li><a href="#3">Mod&egrave;le du Pendule Rotatif</a></li><li><a href="#5">Specifications</a></li><li><a href="#7">Synth&egrave;se des lois de commande Observateur/Controlleur: Cas continu sans rejet de perturbations constantes</a></li><li><a href="#10">Synth&egrave;se des lois de commande Observateur/Controlleur: Cas discret sans rejet de perturbations constantes</a></li><li><a href="#14">Synth&egrave;se des lois de commande Observateur/Controlleur: Cas continu avec rejet de perturbations constantes</a></li><li><a href="#18">Synth&egrave;se des lois de commande Observateur/Controlleur: Cas discret avec rejet de perturbations constantes</a></li></ul></div><h2>Les objectifs<a name="1"></a></h2><div><ul><li>Mod&eacute;lisation du pendule et l'obtention du mod&egrave;le d'&eacute;tat lin&eacute;aire</li><li>Stabilisation du pendule dans la position verticale haute (<img src="Fichier_Synthese_Obs_Cont_Pendule_eq02221297414807511259.png" alt="$$\alpha=0 $$" style="width:27px;height:8px;">) suivant les specifications donn&eacute;es dans le sujet</li><li>Asservissement de la position du bras motoris&eacute; du pendule (angle <img src="Fichier_Synthese_Obs_Cont_Pendule_eq16396028397639111122.png" alt="$$ \theta = \theta_d $$" style="width:30px;height:10px;">) et rejet des perturbation constantes dues aux frottements secs ou aux perturbations de cette angle.</li><li>Implementation des lois de commande sur dSPACE et test sur maquette</li></ul></div><h2>Fichiers fournis et travail &agrave; r&eacute;aliser<a name="2"></a></h2><div><ul><li><b>Modele_Pendule.m</b>: Mod&egrave;le d'&eacute;tat du pendule en boucle ouverte obetnu via les param&egrave;tres fournis par le constructeur (voir les fichiers fournis si n&eacute;cessaire)</li><li><b>Observateur_Controleur_Dspace.slx</b>: Mod&egrave;le de l'observateur-controleur discret sous dSPACE &agrave; adapter en fonction de la lois de commande qu'il implemente.</li><li><b>Construire</b> le mod&egrave;le d'&eacute;tat du pendule en boucle ouverte et l'analyser (<b>stabilit&eacute;, controlabilit&eacute; et observabilit&eacute;</b>)</li><li><b>Synthetiser</b> un observateur-controleur continu capable de stabiliser le pendule dans la position verticale haute conforme aux sp&eacute;cifications donn&eacute;es. R&eacute;aliser le schema de commande sous Simulink en lui donnant le nom <b>Pendule_Observateur_Controleur_Continu.slx</b> et effectuer les tests n&eacute;cessaires.</li><li><b>Synthetiser</b> un observateur-controleur en discret capable de stabiliser le pendule dans la position verticale haute conforme aux sp&eacute;cifications donn&eacute;es. R&eacute;aliser le schema de commande sous Simulink en lui donnant le nom <b>Pendule_Observateur_Controleur_Discret.slx</b> et effectuer les tests n&eacute;cessaires.</li><li><b>Synthetiser</b> un observateur-controleur continu capable de stabiliser le pendule dans la position verticale haute conforme aux sp&eacute;cifications donn&eacute;es et capable de rejeter les perturbations constantes en entr&eacute;e (frottements secs par exemple) et les perturbations constantes sur la sortie theta. Realiser le schema de commande sous Simulink en lui donnant le nom <b>Pendule_Observateur_Controleur_Biais_Continu.slx</b> et effectuer les tests n&eacute;cessaires.</li><li><b>Synthetiser</b> un observateur-controleur discret capable de stabiliser le pendule dans la position verticale haute conforme aux sp&eacute;cifications donn&eacute;es et capable de rejeter les perturbations constantes en entr&eacute;e (frottements secs par exemple) et les perturbations constantes sur la sortie theta. R&eacute;aliser le schema de commande sous Simulink en lui donnant le nom <b>Pendule_Observateur_Controleur_Biais_Discret.slx</b> et effectuer les tests n&eacute;cessaires.</li><li><b>Tester</b> l'architecture de contr&ocirc;le observateur-controleur discret sur la maquette via la carte dSPACE et le fichier fourni en l'adaptant au cas avec ou sans rejet de perturbations.</li></ul></div><pre class="codeinput">clear <span class="string">all</span>,
+clc;clf;
+</pre><img vspace="5" hspace="5" src="Fichier_Synthese_Obs_Cont_Pendule_01.png" style="width:560px;height:420px;" alt=""> <h2>Mod&egrave;le du Pendule Rotatif<a name="3"></a></h2><p><img vspace="5" hspace="5" src=" Pendule_Rotatif.png " alt=""> </p><pre class="codeinput">Modele_Pendule
+</pre><h2>Specifications<a name="5"></a></h2><div><ul><li>Le pendule est un syst&egrave;me de quatri&egrave;me ordre dont la dynamique en boucle ferm&eacute;e donn&eacute;e par son polyn&ocirc;me caracteristique sera d&eacute;compos&eacute; en un polynome de deuxi&egrave;me ordre suivi de deux deux polyn&ocirc;mes de premier ordre: <img src="Fichier_Synthese_Obs_Cont_Pendule_eq02153152284084391232.png" alt="$$ P_c(p)=(p^2 + 2\zeta \omega_0 p + \omega_0^2)(p+p_3)(p+p_4) $$" style="width:199px;height:13px;">. En specifiant le temps de r&eacute;ponse &agrave; <img src="Fichier_Synthese_Obs_Cont_Pendule_eq16331982032334083765.png" alt="$$ 5\% $$" style="width:14px;height:9px;"> et l'amortissement <img src="Fichier_Synthese_Obs_Cont_Pendule_eq14208251419947230116.png" alt="$$ \zeta $$" style="width:5px;height:10px;"> nous pouvons determiner <img src="Fichier_Synthese_Obs_Cont_Pendule_eq12704812021218551213.png" alt="$$ \omega_0 $$" style="width:11px;height:7px;"> (voir le sujet) et ainsi calculer les deux p&ocirc;les dominant du pendule en boucle ferm&eacute;e (<img src="Fichier_Synthese_Obs_Cont_Pendule_eq02787243834908590159.png" alt="$$ -\omega_0 \zeta  \pm j\omega_0 \sqrt{1-\zeta^2} $$" style="width:95px;height:14px;">). Les deux autres p&ocirc;les doivent &ecirc;tre choisis stables, tr&egrave;s rapides par rapport aux p&ocirc;les dominant et consistant par rapport aux capacit&eacute;es des actionneurs et de la structure du pendule.</li><li>On specifie le temps de r&eacute;ponse &agrave; <img src="Fichier_Synthese_Obs_Cont_Pendule_eq16331982032334083765.png" alt="$$ 5\% $$" style="width:14px;height:9px;">:  <img src="Fichier_Synthese_Obs_Cont_Pendule_eq02402949783987306704.png" alt="$$ T_{5\%} = 1 $$" style="width:37px;height:11px;">  seconde et l'amortissement <img src="Fichier_Synthese_Obs_Cont_Pendule_eq18314534290117087275.png" alt="$$ \zeta  = 1 $$" style="width:25px;height:10px;"></li></ul></div><pre class="codeinput">z=1 ;                                                                       <span class="comment">% amortissement zeta</span>
+Tr=0.75 ;                                                                      <span class="comment">% Temps te r&eacute;ponse &agrave; 5%</span>
+w0_Tr=4.5;                                                                    <span class="comment">% woTr=4 (voir figure 3 dans le sujet)</span>
+w0=w0_Tr/Tr;                                                                <span class="comment">% wo en boucle ferm&eacute;e</span>
+p1=-z*w0;                                                                   <span class="comment">% 1er p&ocirc;le dominant</span>
+p2=-z*w0+0.001;                                                             <span class="comment">% 2&egrave;me p&ocirc;le dominant qui doit &ecirc;tre different par rapport au premier afin que la commande place() focntionne</span>
+p3=-6.1*z*w0;                                                              <span class="comment">% 3&egrave;me p&ocirc;le tr&egrave;s rapide par rapport aux deux premiers</span>
+p4=-6.2*z*w0;                                                              <span class="comment">% 4&egrave;me p&ocirc;le tr&egrave;s rapide par rapport aux deux premiers</span>
+Pc=[p1 p2 p3 p4];
+
+Po=3*Pc;                                                                   <span class="comment">% Choix des p&ocirc;les de l'observateur naturellement plus rapides que ceux du syst&egrave;me en boucle ferm&eacute;e</span>
+
+cas=<span class="string">'discret_biais_ObS_4eme_ordre'</span>;
+
+<span class="keyword">switch</span> cas
+</pre><h2>Synth&egrave;se des lois de commande Observateur/Controlleur: Cas continu sans rejet de perturbations constantes<a name="7"></a></h2><div><ul><li>Calculer les gains de retour d'&eacute;tat sous l'hypoth&egrave;se que <b>tous les &eacute;tats sont mesurables</b></li><li>Calculer les gais de l'observateur suposant <b>qu'on mesure uniquement</b> les angles <b>(theta et alpha)</b> et utilisant le <b>mod&egrave;le dual</b> <img src="Fichier_Synthese_Obs_Cont_Pendule_eq07134125511537998518.png" alt="$$ \{A^T,B^T,C^T,D^T \} $$" style="width:84px;height:13px;"></li><li>Construire le schema block Simulink et effectuer les simulations consid&eacute;rant une consigne sur l'angle theta <b>ou/et</b> la presence d'une perturbation constante sur le signal de commande ou sur l'angle theta</li><li>Donner les resultats de simulations <b>les plus significatifs illustrant vos conclusions</b></li><li>Realiser une sequence video des tests effectu&eacute;s sur maquette et publier cette sequence dans une adresse &agrave; envoy&eacute; avec votre rapport (sans la s&eacute;quence vid&eacute;o).</li><li>Conclure sur l'utilit&eacute; et l'efficcit&eacute; de cette algorithme de contr&ocirc;le par rapport au specifications donn&eacute;es</li></ul></div><p><img vspace="5" hspace="5" src="Pendule_Observateur_Controleur_Continu.png" alt=""> </p><pre class="codeinput"><span class="keyword">case</span> <span class="string">'continue'</span>
+</pre><pre class="codeinput">    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0]';
+    Kc=place(A,B,Pc);
+    Ko=place(A',C',Po);
+    Ko=Ko';
+    Ao=A-Ko*C;
+    Bo=[B Ko];
+    Co=eye(4,4);
+    Do=zeros(4,3);
+</pre><h2>Synth&egrave;se des lois de commande Observateur/Controlleur: Cas discret sans rejet de perturbations constantes<a name="10"></a></h2><div><ul><li>Calculer les gains de retour d'&eacute;tat sous l'hypoth&egrave;se que <b>tous les &eacute;tats sont mesurables</b></li><li>Calculer les gais de l'observateur suposant <b>qu'on mesure uniquement</b> les angles <b>(theta et alpha)</b> et utilisant le <b>mod&egrave;le dual</b> <img src="Fichier_Synthese_Obs_Cont_Pendule_eq07134125511537998518.png" alt="$$ \{A^T,B^T,C^T,D^T \} $$" style="width:84px;height:13px;"></li><li>Construire le schema block Simulink et effectuer les simulations consid&eacute;rant une consigne sur l'angle theta <b>ou/et</b> la presence d'une perturbation constante sur le signal de commande ou sur l'angle theta</li><li>Donner les resultats de simulations <b>les plus significatifs illustrant vos conclusions</b></li><li>Realiser une sequence video des tests effectu&eacute;s sur maquette et publier cette sequence dans une adresse &agrave; envoy&eacute; avec votre rapport (sans la s&eacute;quence vid&eacute;o).</li><li>Conclure sur l'utilit&eacute; et l'efficcit&eacute; de cette algorithme de contr&ocirc;le par rapport au specifications donn&eacute;es</li></ul></div><p><img vspace="5" hspace="5" src="Pendule_Observateur_Controleur_Discret.png" alt=""> </p><pre class="codeinput">    <span class="keyword">case</span> <span class="string">'discret'</span>
+</pre><pre class="codeinput">    T_ech=0.005;
+    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0]';
+    [Ad,Bd]=c2d(A,B,T_ech)
+    Cd=C;Dd=D;
+    Pcd=exp(Pc*T_ech);
+    Pod=exp(Po*T_ech);
+    Kcd=place(Ad,Bd,Pcd);
+    Kod=place(Ad',Cd',Pod);
+    Kod=Kod';
+    Aod=Ad-Kod*Cd;
+    Bod=[Bd Kod];
+    Cod=eye(4,4);
+    Dod=zeros(4,3);
+</pre><h2>Synth&egrave;se des lois de commande Observateur/Controlleur: Cas continu avec rejet de perturbations constantes<a name="14"></a></h2><div><ul><li>Calculer les gains de retour d'&eacute;tat sous l'hypoth&egrave;se que <b>tous les &eacute;tats sont mesurables</b> y compris <b>le cinqui&egrave;me &eacute;tat</b> qui est l'integral de l'erreur entre l'angle theta et sa consigne</li><li>Calculer les gais de l'observateur suposant <b>qu'on mesure uniquement</b> les angles <b>(theta et alpha) et l'integral de l'erreur entre l'angle theta et sa consigne</b> utilisant le <b>mod&egrave;le dual</b> <img src="Fichier_Synthese_Obs_Cont_Pendule_eq15557013329700453332.png" alt="$$ \{A_a^T,B_a^T,C_a^T,D_a^T \} $$" style="width:84px;height:13px;"></li><li>Construire le schema block Simulink et effectuer les simulations consid&eacute;rant une consigne sur l'angle theta <b>ou/et</b> la presence d'une perturbation constante sur le signal de commande ou sur l'angle theta</li><li>Donner les resultats de simulations <b>les plus significatifs illustrant vos conclusions</b></li><li>Realiser une sequence video des tests effectu&eacute;s sur maquette et publier cette sequence dans une adresse &agrave; envoy&eacute; avec votre rapport (sans la s&eacute;quence vid&eacute;o).</li><li>Conclure sur l'utilit&eacute; et l'efficcit&eacute; de cette algorithme de contr&ocirc;le par rapport au specifications donn&eacute;es</li></ul></div><p><img vspace="5" hspace="5" src="Pendule_Observateur_Controleur_Continu_Biais.png" alt=""> </p><pre class="codeinput">    <span class="keyword">case</span> <span class="string">'continue_biais'</span>
+</pre><pre class="codeinput">    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0 0]';
+    Aa=[A [0 0 0 0]'; [1 0 0 0 0]];
+    Ba=[B;0];
+    Ca=[C,[0 0]';0 0 0 0 1];
+    Da=zeros(3,1);
+    Pc=[Pc 0.8*Pc(1)];
+    Po=3*Pc;
+    Kc=place(Aa,Ba,Pc);
+    Ko=place(Aa',Ca',Po)
+    Ko=Ko';
+    Ao=Aa-Ko*Ca;
+    Bo=[Ba Ko];
+    Co=eye(5,5);
+    Do=zeros(5,4);
+</pre><h2>Synth&egrave;se des lois de commande Observateur/Controlleur: Cas discret avec rejet de perturbations constantes<a name="18"></a></h2><div><ul><li>Calculer les gains de retour d'&eacute;tat sous l'hypoth&egrave;se que <b>tous les &eacute;tats sont mesurables</b> y compris <b>le cinqui&egrave;me &eacute;tat</b> qui est l'integral de l'erreur entre l'angle theta et sa consigne</li><li>Calculer les gais de l'observateur suposant <b>qu'on mesure uniquement</b> les angles <b>(theta et alpha) et l'integral de l'erreur entre l'angle theta et sa consigne</b> utilisant le <b>mod&egrave;le dual</b> <img src="Fichier_Synthese_Obs_Cont_Pendule_eq15557013329700453332.png" alt="$$ \{A_a^T,B_a^T,C_a^T,D_a^T \} $$" style="width:84px;height:13px;"></li><li>Construire le schema block Simulink et effectuer les simulations consid&eacute;rant une consigne sur l'angle theta <b>ou/et</b> la presence d'une perturbation constante sur le signal de commande ou sur l'angle theta</li><li>Donner les resultats de simulations <b>les plus significatifs illustrant vos conclusions</b></li><li>Realiser une sequence video des tests effectu&eacute;s sur maquette et publier cette sequence dans une adresse &agrave; envoy&eacute; avec votre rapport (sans la s&eacute;quence vid&eacute;o). % * Conclure sur l'utilit&eacute; et l'efficcit&eacute; de cette algorithme de contr&ocirc;le par rapport au specifications donn&eacute;es</li></ul></div><p><img vspace="5" hspace="5" src=" Pendule_Observateur_Controleur_Discret_Biais.png " alt=""> </p><pre class="codeinput"><span class="keyword">case</span> <span class="string">'discret_biais'</span>
+    T_ech=0.005;
+    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0 0]';
+    Aa=[A [0 0 0 0]'; [1 0 0 0 0]];
+    Ba=[B;0];
+    Ca=[C,[0 0]';0 0 0 0 1];
+    Da=zeros(3,1);
+    [Ad,Bd]=c2d(Aa,Ba,T_ech);
+    Cd=Ca;Dd=Da;
+    Pc=[Pc 0.1*Pc(1)];
+    Po=3*Pc;
+    Pcd=exp(Pc*T_ech);
+    Pod=exp(Po*T_ech);
+    Kcd=place(Ad,Bd,Pcd);
+    Kod=place(Ad',Cd',Pod);
+    Kod=Kod';
+    Aod=Ad-Kod*Cd;
+    Bod=[Bd Kod];
+    Cod=eye(5,5);
+    Dod=zeros(5,4);
+
+
+    <span class="keyword">case</span> <span class="string">'discret_biais_ObS_4eme_ordre'</span>
+</pre><pre class="codeinput">    T_ech=0.01;
+    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0]';
+    Aa=[A [0 0 0 0]'; [1 0 0 0 0]];
+    Ba=[B;0];
+    [Ad,Bd]=c2d(A,B,T_ech);
+    Cd=C;Dd=D;
+    [Adb,Bdb]=c2d(Aa,Ba,T_ech);
+    Pcb=[Pc 0.2*Pc(1)];
+    Po=3*Pc;
+    Pcd=exp(Pcb*T_ech);
+    Pod=exp(Po*T_ech);
+    Kcd=place(Adb,Bdb,Pcd);
+    Kod=place(Ad',Cd',Pod);
+    Kod=Kod';
+    Aod=Ad-Kod*Cd;
+    Bod=[Bd Kod];
+    Cod=eye(4,4);
+    Dod=zeros(4,3);
+
+
+<span class="keyword">end</span>
+<span class="comment">%Observateur_Controleur_Dspace</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Synthèse des lois de commande Observateur/Controleur du Pendule Rotatif
+%% Les objectifs
+% * Modélisation du pendule et l'obtention du modèle d'état linéaire
+% * Stabilisation du pendule dans la position verticale haute ($$\alpha=0 $$) suivant les
+% specifications données dans le sujet
+% * Asservissement de la position du bras motorisé du pendule (angle $$
+% \theta = \theta_d $$) et rejet des perturbation constantes dues aux
+% frottements secs ou aux perturbations de cette angle.
+% * Implementation des lois de commande sur dSPACE et test sur maquette
+%
+%% Fichiers fournis et travail à réaliser
+% *  *Modele_Pendule.m*: Modèle d'état du pendule en boucle ouverte obetnu
+% via les paramètres fournis par le constructeur (voir les fichiers fournis
+% si nécessaire)
+% * *Observateur_Controleur_Dspace.slx*: Modèle de l'observateur-controleur
+% discret sous dSPACE à adapter en fonction de la lois de commande qu'il
+% implemente.
+% * *Construire* le modèle d'état du pendule en boucle ouverte et l'analyser (*stabilité, controlabilité et observabilité*) 
+% * *Synthetiser* un observateur-controleur continu capable de stabiliser le pendule dans la position verticale haute conforme aux spécifications données. 
+% Réaliser le schema de commande sous Simulink en lui donnant le nom
+% *Pendule_Observateur_Controleur_Continu.slx* et effectuer les tests nécessaires.
+% * *Synthetiser* un observateur-controleur en discret capable de stabiliser le pendule dans la position verticale haute conforme aux spécifications données. 
+% Réaliser le schema de commande sous Simulink en lui donnant le nom
+% *Pendule_Observateur_Controleur_Discret.slx* et effectuer les tests nécessaires.
+% * *Synthetiser* un observateur-controleur continu capable de stabiliser le pendule dans la position verticale haute conforme aux spécifications données 
+% et capable de rejeter les perturbations constantes en entrée (frottements secs par exemple) et les perturbations constantes sur la sortie theta. 
+% Realiser le schema de commande sous Simulink en lui donnant le nom *Pendule_Observateur_Controleur_Biais_Continu.slx* et effectuer les tests
+% nécessaires.
+% * *Synthetiser* un observateur-controleur discret capable de stabiliser le pendule dans la position verticale haute conforme aux spécifications données 
+% et capable de rejeter les perturbations constantes en entrée (frottements secs par exemple) et les perturbations constantes sur la sortie theta. 
+% Réaliser le schema de commande sous Simulink en lui donnant le nom *Pendule_Observateur_Controleur_Biais_Discret.slx* et effectuer les tests
+% nécessaires.
+% * *Tester* l'architecture de contrôle observateur-controleur discret sur la
+% maquette via la carte dSPACE et le fichier fourni en l'adaptant au cas
+% avec ou sans rejet de perturbations.
+
+
+clear all,
+clc;clf;
+
+%% Modèle du Pendule Rotatif
+%%
+%
+% << Pendule_Rotatif.png >>
+%
+Modele_Pendule
+
+%% Specifications
+% * Le pendule est un système de quatrième ordre dont la dynamique en boucle fermée donnée par son polynôme caracteristique  
+% sera décomposé en un polynome de deuxième ordre suivi de deux deux
+% polynômes de premier ordre: $$ P_c(p)=(p^2 + 2\zeta \omega_0 p + \omega_0^2)(p+p_3)(p+p_4) $$. 
+% En specifiant le temps de réponse à $$ 5\% $$ et l'amortissement $$ \zeta $$ nous pouvons determiner $$ \omega_0 $$ (voir le sujet) 
+% et ainsi calculer les deux pôles dominant du pendule en boucle fermée ($$ -\omega_0 \zeta  \pm j\omega_0 \sqrt{1-\zeta^2} $$). 
+% Les deux autres pôles doivent être choisis stables, très rapides par rapport aux pôles dominant et consistant par rapport aux 
+% capacitées des actionneurs et de la structure du pendule.
+% * On specifie le temps de réponse à $$ 5\% $$:  $$ T_{5\%} = 1 $$  seconde et
+% l'amortissement $$ \zeta  = 1 $$
+
+z=1 ;                                                                       % amortissement zeta
+Tr=0.75 ;                                                                      % Temps te réponse à 5%
+w0_Tr=4.5;                                                                    % woTr=4 (voir figure 3 dans le sujet)
+w0=w0_Tr/Tr;                                                                % wo en boucle fermée
+p1=-z*w0;                                                                   % 1er pôle dominant
+p2=-z*w0+0.001;                                                             % 2ème pôle dominant qui doit être different par rapport au premier afin que la commande place() focntionne
+p3=-6.1*z*w0;                                                              % 3ème pôle très rapide par rapport aux deux premiers
+p4=-6.2*z*w0;                                                              % 4ème pôle très rapide par rapport aux deux premiers
+Pc=[p1 p2 p3 p4];  
+
+Po=3*Pc;                                                                   % Choix des pôles de l'observateur naturellement plus rapides que ceux du système en boucle fermée
+
+cas='discret_biais_ObS_4eme_ordre';
+
+switch cas  
+    
+%% Synthèse des lois de commande Observateur/Controlleur: Cas continu sans rejet de perturbations constantes
+% * Calculer les gains de retour d'état sous l'hypothèse que *tous les états
+% sont mesurables*
+% * Calculer les gais de l'observateur suposant *qu'on mesure uniquement* les
+% angles *(theta et alpha)* et utilisant le *modèle dual* $$ \{A^T,B^T,C^T,D^T \}
+% $$
+% * Construire le schema block Simulink et effectuer les simulations
+% considérant une consigne sur l'angle theta *ou/et* la presence d'une perturbation
+% constante sur le signal de commande ou sur l'angle theta
+% * Donner les resultats de simulations *les plus significatifs
+% illustrant vos conclusions*
+% * Realiser une sequence video des tests effectués sur maquette et publier cette sequence dans une adresse à envoyé avec votre rapport (sans la séquence vidéo). 
+% * Conclure sur l'utilité et l'efficcité de
+% cette algorithme de contrôle par rapport au specifications données
+% 
+%%
+ %
+ % <<Pendule_Observateur_Controleur_Continu.png>>
+ %
+case 'continue'
+  
+    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0]';
+    Kc=place(A,B,Pc);
+    Ko=place(A',C',Po);
+    Ko=Ko';
+    Ao=A-Ko*C;
+    Bo=[B Ko];
+    Co=eye(4,4);
+    Do=zeros(4,3);
+%% Synthèse des lois de commande Observateur/Controlleur: Cas discret sans rejet de perturbations constantes
+% * Calculer les gains de retour d'état sous l'hypothèse que *tous les états
+% sont mesurables*
+% * Calculer les gais de l'observateur suposant *qu'on mesure uniquement* les
+% angles *(theta et alpha)* et utilisant le *modèle dual* $$ \{A^T,B^T,C^T,D^T \}
+% $$
+% * Construire le schema block Simulink et effectuer les simulations
+% considérant une consigne sur l'angle theta *ou/et* la presence d'une perturbation
+% constante sur le signal de commande ou sur l'angle theta
+% * Donner les resultats de simulations *les plus significatifs
+% illustrant vos conclusions*
+% * Realiser une sequence video des tests effectués sur maquette et publier cette sequence dans une adresse à envoyé avec votre rapport (sans la séquence vidéo). 
+% * Conclure sur l'utilité et l'efficcité de
+% cette algorithme de contrôle par rapport au specifications données
+% 
+   %%
+    %
+    % <<Pendule_Observateur_Controleur_Discret.png>>
+    %
+    case 'discret'
+    
+    T_ech=0.005;
+    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0]';
+    [Ad,Bd]=c2d(A,B,T_ech)
+    Cd=C;Dd=D;
+    Pcd=exp(Pc*T_ech);
+    Pod=exp(Po*T_ech);
+    Kcd=place(Ad,Bd,Pcd);
+    Kod=place(Ad',Cd',Pod);
+    Kod=Kod';
+    Aod=Ad-Kod*Cd;
+    Bod=[Bd Kod];
+    Cod=eye(4,4);
+    Dod=zeros(4,3);
+
+%% Synthèse des lois de commande Observateur/Controlleur: Cas continu avec rejet de perturbations constantes
+% * Calculer les gains de retour d'état sous l'hypothèse que *tous les états
+% sont mesurables* y compris *le cinquième état* qui est l'integral de
+% l'erreur entre l'angle theta et sa consigne
+% * Calculer les gais de l'observateur suposant *qu'on mesure uniquement* les
+% angles *(theta et alpha) et l'integral de l'erreur entre l'angle theta et sa consigne* utilisant le *modèle dual* $$ \{A_a^T,B_a^T,C_a^T,D_a^T \}
+% $$
+% * Construire le schema block Simulink et effectuer les simulations
+% considérant une consigne sur l'angle theta *ou/et* la presence d'une perturbation
+% constante sur le signal de commande ou sur l'angle theta
+% * Donner les resultats de simulations *les plus significatifs
+% illustrant vos conclusions*
+% * Realiser une sequence video des tests effectués sur maquette et publier cette sequence dans une adresse à envoyé avec votre rapport (sans la séquence vidéo). 
+% * Conclure sur l'utilité et l'efficcité de
+% cette algorithme de contrôle par rapport au specifications données
+% 
+  %%
+    %
+    % <<Pendule_Observateur_Controleur_Continu_Biais.png>>
+    %
+    case 'continue_biais'
+    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0 0]';
+    Aa=[A [0 0 0 0]'; [1 0 0 0 0]];
+    Ba=[B;0];
+    Ca=[C,[0 0]';0 0 0 0 1];
+    Da=zeros(3,1);
+    Pc=[Pc 0.8*Pc(1)];
+    Po=3*Pc;
+    Kc=place(Aa,Ba,Pc);
+    Ko=place(Aa',Ca',Po)
+    Ko=Ko';
+    Ao=Aa-Ko*Ca;
+    Bo=[Ba Ko];
+    Co=eye(5,5);
+    Do=zeros(5,4);
+   
+    
+     
+%% Synthèse des lois de commande Observateur/Controlleur: Cas discret avec rejet de perturbations constantes
+% * Calculer les gains de retour d'état sous l'hypothèse que *tous les états
+% sont mesurables* y compris *le cinquième état* qui est l'integral de
+% l'erreur entre l'angle theta et sa consigne
+% * Calculer les gais de l'observateur suposant *qu'on mesure uniquement* les
+% angles *(theta et alpha) et l'integral de l'erreur entre l'angle theta et sa consigne* utilisant le *modèle dual* $$ \{A_a^T,B_a^T,C_a^T,D_a^T \}
+% $$
+% * Construire le schema block Simulink et effectuer les simulations
+% considérant une consigne sur l'angle theta *ou/et* la presence d'une perturbation
+% constante sur le signal de commande ou sur l'angle theta
+% * Donner les resultats de simulations *les plus significatifs
+% illustrant vos conclusions*
+% * Realiser une sequence video des tests effectués sur maquette et publier cette sequence dans une adresse à envoyé avec votre rapport (sans la séquence vidéo). % * Conclure sur l'utilité et l'efficcité de
+% cette algorithme de contrôle par rapport au specifications données
+% 
+%%
+% 
+% << Pendule_Observateur_Controleur_Discret_Biais.png >>
+%
+case 'discret_biais'
+    T_ech=0.005;
+    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0 0]';
+    Aa=[A [0 0 0 0]'; [1 0 0 0 0]];
+    Ba=[B;0];
+    Ca=[C,[0 0]';0 0 0 0 1];
+    Da=zeros(3,1);
+    [Ad,Bd]=c2d(Aa,Ba,T_ech);
+    Cd=Ca;Dd=Da;
+    Pc=[Pc 0.1*Pc(1)];
+    Po=3*Pc;
+    Pcd=exp(Pc*T_ech);
+    Pod=exp(Po*T_ech);
+    Kcd=place(Ad,Bd,Pcd);
+    Kod=place(Ad',Cd',Pod);
+    Kod=Kod';
+    Aod=Ad-Kod*Cd;
+    Bod=[Bd Kod];
+    Cod=eye(5,5);
+    Dod=zeros(5,4);
+ 
+    
+    case 'discret_biais_ObS_4eme_ordre'
+    T_ech=0.01;
+    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0]';
+    Aa=[A [0 0 0 0]'; [1 0 0 0 0]];
+    Ba=[B;0];
+    [Ad,Bd]=c2d(A,B,T_ech);
+    Cd=C;Dd=D;
+    [Adb,Bdb]=c2d(Aa,Ba,T_ech);
+    Pcb=[Pc 0.2*Pc(1)];
+    Po=3*Pc;
+    Pcd=exp(Pcb*T_ech);
+    Pod=exp(Po*T_ech);
+    Kcd=place(Adb,Bdb,Pcd);
+    Kod=place(Ad',Cd',Pod);
+    Kod=Kod';
+    Aod=Ad-Kod*Cd;
+    Bod=[Bd Kod];
+    Cod=eye(4,4);
+    Dod=zeros(4,3);
+    
+
+end
+%Observateur_Controleur_Dspace
+##### SOURCE END #####
+--></body></html>

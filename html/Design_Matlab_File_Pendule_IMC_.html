@@ -1,0 +1,260 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Design of Observer-Controller Control Law for Rotary Inverted Pendulum</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-09-29"><meta name="DC.source" content="Design_Matlab_File_Pendule_IMC_.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Design of Observer-Controller Control Law for Rotary Inverted Pendulum</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Goals</a></li><li><a href="#2">Given Matlab/Simulink files and work to be done</a></li><li><a href="#3">Model of Ratary Inverted Pendulum</a></li><li><a href="#5">Specifications</a></li><li><a href="#7">Design of the observer-controller control law for the continuous case.</a></li><li><a href="#10">Design of the observer-controller control law for the discrete case.</a></li></ul></div><h2>Goals<a name="1"></a></h2><div><ul><li>Study the inverted pendulum modelling and obtain its linear state space model.</li><li>Stabilization of inverted pendulum in the upper vertical position (<img src="Design_Matlab_File_Pendule_IMC__eq09205154037381690726.png" alt="$$ \ alpha = 0 $$">) following the specifications given in the related topic.</li><li>Obtain the discrete observer-controller in state space form respecting the name of matrix parameters declared in the dSPACE/Simulink file Observateur_Controleur_Dspace_IMC.</li><li>Implementation of the control laws in dSPACE and test it on the <b>real inverted pendulum</b>.</li></ul></div><h2>Given Matlab/Simulink files and work to be done<a name="2"></a></h2><div><ul><li><b>Modele_Pendule.m</b>: State space model of opened loop inverted pendulum based on the data provided by the constructor.</li><li><b>Observateur_Controleur_Dspace_IMC.slx</b>: Observer-Controller discrete model used to generate the real time controller code.</li><li><b>Contruct the inverted pendulum</b> open loop state space model in Simulink and analyse its <b>stability, reachability and observability</b>.</li><li><b>Design a continuous</b> observer-controller  capable to stabilize the inverted pendulum  in its upright position. Realize the Simulink control scheme based on the figure given in the related topic and  give it the name <b>Pendule_Observateur_Controleur_Continu.slx</b> and conduct the necessary tests.</li><li><b>Design a discrete</b> observer-controller  capable to stabilize the inverted pendulum  in its upright position. Realize the Simulink control scheme based on the figure given in the related topic and  give it the name <b>Pendule_Observateur_Controleur_Discret.slx</b> and conduct the necessary tests.</li></ul></div><pre class="codeinput">clear <span class="string">all</span>,
+clc;clf;
+</pre><img vspace="5" hspace="5" src="Design_Matlab_File_Pendule_IMC__01.png" alt=""> <h2>Model of Ratary Inverted Pendulum<a name="3"></a></h2><p><img vspace="5" hspace="5" src=" Pendule_Rotatif.png " alt=""> </p><pre class="codeinput">Modele_Pendule
+</pre><h2>Specifications<a name="5"></a></h2><p>The pendulum is a fourth order system whose  closed-loop dynamic given by its characteristic polynomial will be decomposed into a second order polynomial followed by two first-order polynomials (<img src="Design_Matlab_File_Pendule_IMC__eq02153152284084391232.png" alt="$$ P_c(p)=(p^2 + 2\zeta \omega_0 p + \omega_0^2)(p+p_3)(p+p_4) $$">). Specifying the <img src="Design_Matlab_File_Pendule_IMC__eq16331982032334083765.png" alt="$$ 5\% $$"> response time and the damping ratio <img src="Design_Matlab_File_Pendule_IMC__eq14208251419947230116.png" alt="$$ \zeta $$"> we can determine <img src="Design_Matlab_File_Pendule_IMC__eq12704812021218551213.png" alt="$$ \omega_0 $$"> and thus calculate the  closed loop dominant poles of inverted pendulum (<img src="Design_Matlab_File_Pendule_IMC__eq02787243834908590159.png" alt="$$ -\omega_0 \zeta  \pm j\omega_0 \sqrt{1-\zeta^2} $$">). The other two poles should be selected stable and sufficient fast compared to dominant poles and consistent w.r.t actuators capacities and pendulum structure.</p><pre class="codeinput">z=1 ;                                                                      <span class="comment">% amortissement zeta</span>
+Tr=0.75 ;                                                                  <span class="comment">% Temps te r&eacute;ponse &agrave; 5%</span>
+w0_Tr=4.5;                                                                 <span class="comment">% woTr=4</span>
+w0=w0_Tr/Tr;                                                               <span class="comment">% wo en boucle ferm&eacute;e</span>
+p1=-z*w0;                                                                  <span class="comment">% 1er p&ocirc;le dominant</span>
+p2=-z*w0+0.001;                                                            <span class="comment">% 2&egrave;me p&ocirc;le dominant qui doit &ecirc;tre different par rapport au premier afin que la commande place() focntionne</span>
+p3=-6.1*z*w0;                                                              <span class="comment">% 3&egrave;me p&ocirc;le tr&egrave;s rapide par rapport aux deux premiers</span>
+p4=-6.2*z*w0;                                                              <span class="comment">% 4&egrave;me p&ocirc;le tr&egrave;s rapide par rapport aux deux premiers</span>
+Pc=[p1 p2 p3 p4];
+
+Po=3*Pc;                                                                   <span class="comment">% Choix des p&ocirc;les de l'observateur naturellement plus rapides que ceux du syst&egrave;me en boucle ferm&eacute;e</span>
+
+cas=<span class="string">'discret'</span>;
+
+<span class="keyword">switch</span> cas
+</pre><h2>Design of the observer-controller control law for the continuous case.<a name="7"></a></h2><div><ul><li>Calculate the feedback gains supposing that <b>the pendulum state is measurable</b>.</li><li>Calculate the feedback observer gains <b>supposing that we mesure only the angles thetat and alpha</b> and using the dual linear model <img src="Design_Matlab_File_Pendule_IMC__eq07134125511537998518.png" alt="$$ \{A^T,B^T,C^T,D^T \} $$">.</li><li>Construct the Simulink scheme and operate the necessary simulations in order to verify the stability and the defined performances of the feedbacked inverted pendulum.</li><li>Give the most significant results and illustrate your conclusions</li></ul></div><p><img vspace="5" hspace="5" src="Pendule_Observateur_Controleur_Continu.png" alt=""> </p><pre class="codeinput"><span class="keyword">case</span> <span class="string">'continue'</span>
+</pre><pre class="codeinput">    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0]';
+    Kc=place(A,B,Pc);
+    Ko=place(A',C',Po);
+    Ko=Ko';
+    Ao=A-Ko*C;
+    Bo=[B Ko];
+    Co=eye(4,4);
+    Do=zeros(4,3);
+</pre><h2>Design of the observer-controller control law for the discrete case.<a name="10"></a></h2><div><ul><li>Calculate the feedback gains supposing that <b>the pendulum state is measurable</b>.</li><li>Calculate the feedback observer gains <b>supposing that we mesure only the angles thetat an alpha</b> and using the dual linear model <img src="Design_Matlab_File_Pendule_IMC__eq09053434402732032174.png" alt="$$ \{A_d^T,B_d^T,C_d^T,D_d^T \} $$">.</li><li>Construct the Simulink scheme and operate the necessary simulations in order to verify the stability and the defined performances of the feedbacked inverted pendulum.</li><li>Give the most significant results and illustrate your conclusions</li></ul></div><p><img vspace="5" hspace="5" src="Pendule_Observateur_Controleur_Discret.png" alt=""> </p><pre class="codeinput">    <span class="keyword">case</span> <span class="string">'discret'</span>
+</pre><pre class="codeinput">    T_ech=0.005;
+    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0]';
+    [Ad,Bd]=c2d(A,B,T_ech)
+    Cd=C;Dd=D;
+    Pcd=exp(Pc*T_ech);
+    Pod=exp(Po*T_ech);
+    Kcd=place(Ad,Bd,Pcd);
+    Kod=place(Ad',Cd',Pod);
+    Kod=Kod';
+    Aod=Ad-Kod*Cd;
+    Bod=[Bd Kod];
+    Cod=eye(4,4);
+    Dod=zeros(4,3);
+
+<span class="keyword">end</span>
+<span class="comment">%Observateur_Controleur_Dspace_IMC;</span>
+</pre><pre class="codeoutput">
+Ad =
+
+    1.0000    0.0006    0.0046    0.0000
+         0    1.0009   -0.0003    0.0050
+         0    0.2148    0.8302    0.0006
+         0    0.3717   -0.1201    1.0009
+
+
+Bd =
+
+    0.0008
+    0.0006
+    0.3052
+    0.2160
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Design of Observer-Controller Control Law for Rotary Inverted Pendulum 
+%% Goals
+% * Study the inverted pendulum modelling and obtain its linear state
+% space model.
+% * Stabilization of inverted pendulum in the upper vertical position ($$ \ alpha = 0 $$) following the
+% specifications given in the related topic.
+% * Obtain the discrete observer-controller in state space form respecting
+% the name of matrix parameters declared in the dSPACE/Simulink file
+% Observateur_Controleur_Dspace_IMC.
+% * Implementation of the control laws in dSPACE and test it on the *real
+% inverted pendulum*.
+%
+%% Given Matlab/Simulink files and work to be done
+% *  *Modele_Pendule.m*: State space model of opened loop inverted pendulum 
+% based on the data provided by the constructor.
+% * *Observateur_Controleur_Dspace_IMC.slx*: Observer-Controller discrete model used to generate the real time controller code. 
+% * *Contruct the inverted pendulum* open loop state space model in Simulink and
+% analyse its *stability, reachability and observability*.
+% * *Design a continuous* observer-controller  capable to stabilize the inverted pendulum  in its upright position. 
+% Realize the Simulink control scheme based on the figure given in the related topic and  give it the name
+% *Pendule_Observateur_Controleur_Continu.slx* and conduct the necessary tests.
+% * *Design a discrete* observer-controller  capable to stabilize the inverted pendulum  in its upright position. 
+% Realize the Simulink control scheme based on the figure given in the related topic and  give it the name
+% *Pendule_Observateur_Controleur_Discret.slx* and conduct the necessary tests.
+
+
+clear all,
+clc;clf;
+
+%% Model of Ratary Inverted Pendulum
+%%
+%
+% << Pendule_Rotatif.png >>
+%
+Modele_Pendule
+
+%% Specifications
+% The pendulum is a fourth order system whose  closed-loop dynamic given by its 
+% characteristic polynomial will be decomposed into a second order polynomial 
+% followed by two first-order polynomials 
+% ($$ P_c(p)=(p^2 + 2\zeta \omega_0 p + \omega_0^2)(p+p_3)(p+p_4) $$).
+% Specifying the $$ 5\% $$ response time and 
+% the damping ratio $$ \zeta $$ we can determine $$ \omega_0 $$ 
+% and thus calculate the  closed loop dominant poles of inverted pendulum 
+% ($$ -\omega_0 \zeta  \pm j\omega_0 \sqrt{1-\zeta^2} $$). 
+% The other two poles should be selected stable and sufficient fast compared 
+% to dominant poles and consistent w.r.t actuators capacities and 
+% pendulum structure.
+
+z=1 ;                                                                      % amortissement zeta
+Tr=0.75 ;                                                                  % Temps te réponse à 5%
+w0_Tr=4.5;                                                                 % woTr=4 
+w0=w0_Tr/Tr;                                                               % wo en boucle fermée
+p1=-z*w0;                                                                  % 1er pôle dominant
+p2=-z*w0+0.001;                                                            % 2ème pôle dominant qui doit être different par rapport au premier afin que la commande place() focntionne
+p3=-6.1*z*w0;                                                              % 3ème pôle très rapide par rapport aux deux premiers
+p4=-6.2*z*w0;                                                              % 4ème pôle très rapide par rapport aux deux premiers
+Pc=[p1 p2 p3 p4];  
+
+Po=3*Pc;                                                                   % Choix des pôles de l'observateur naturellement plus rapides que ceux du système en boucle fermée
+
+cas='discret';
+
+switch cas  
+    
+%% Design of the observer-controller control law for the continuous case.
+% * Calculate the feedback gains supposing that *the pendulum state is
+% measurable*.
+% * Calculate the feedback observer gains *supposing that we mesure only the
+% angles thetat and alpha* and using the dual linear model $$ \{A^T,B^T,C^T,D^T \}
+% $$.
+% * Construct the Simulink scheme and operate the necessary simulations in
+% order to verify the stability and the defined performances of the feedbacked inverted
+% pendulum.
+% * Give the most significant results and illustrate your conclusions
+%
+%%
+ %
+ % <<Pendule_Observateur_Controleur_Continu.png>>
+ %
+case 'continue'
+  
+    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0]';
+    Kc=place(A,B,Pc);
+    Ko=place(A',C',Po);
+    Ko=Ko';
+    Ao=A-Ko*C;
+    Bo=[B Ko];
+    Co=eye(4,4);
+    Do=zeros(4,3);
+%% Design of the observer-controller control law for the discrete case.
+% * Calculate the feedback gains supposing that *the pendulum state is
+% measurable*.
+% * Calculate the feedback observer gains *supposing that we mesure only the
+% angles thetat an alpha* and using the dual linear model $$ \{A_d^T,B_d^T,C_d^T,D_d^T \}
+% $$.
+% * Construct the Simulink scheme and operate the necessary simulations in
+% order to verify the stability and the defined performances of the feedbacked inverted
+% pendulum.
+% * Give the most significant results and illustrate your conclusions
+%
+
+   %%
+    %
+    % <<Pendule_Observateur_Controleur_Discret.png>>
+    %
+    case 'discret'
+    
+    T_ech=0.005;
+    X0=[0.3 0 0 0]';
+    X0_o=[0 0 0 0]';
+    [Ad,Bd]=c2d(A,B,T_ech)
+    Cd=C;Dd=D;
+    Pcd=exp(Pc*T_ech);
+    Pod=exp(Po*T_ech);
+    Kcd=place(Ad,Bd,Pcd);
+    Kod=place(Ad',Cd',Pod);
+    Kod=Kod';
+    Aod=Ad-Kod*Cd;
+    Bod=[Bd Kod];
+    Cod=eye(4,4);
+    Dod=zeros(4,3);
+
+end
+%Observateur_Controleur_Dspace_IMC;
+##### SOURCE END #####
+--></body></html>

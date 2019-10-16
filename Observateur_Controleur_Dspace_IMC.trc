@@ -1,0 +1,1396 @@
+-- ****************************************************************************
+--
+--  Trace file: Observateur_Controleur_Dspace_IMC.trc
+--
+--  RTI1104 6.9.1 (02-Nov-2012)
+--  Wed Sep 28 15:55:49 2016
+--
+--  Used options:
+--    TRCGenerateVirtualBlocks      = 1
+--    TRCGenerateLabels             = 1
+--    TRCGenerateStates             = 0
+--    TRCGenerateDerivatives        = 0
+--    TRCGenerateParamValues        = 0
+--    TRCGenerateApplicationKeyword = 0
+--    TRCOnlyGlobals                = 0
+--    TRCIsOmitVdOn                 = 0
+--
+--  Trace file format: 2
+--
+--  (c) Copyright 2008, dSPACE GmbH. All rights reserved.
+--
+-- ****************************************************************************
+
+-- ******** Keywords **********************************************************
+
+-- _application "Observateur_Controleur_Dspace_IMC.map"
+
+_genname     "RTI"
+_genversion  "6.9.1"
+_gendate     "09/28/2016 15:56:01"
+_description ""
+_author      "RTI1104 6.9.1 (02-Nov-2012)"
+_model       "Observateur_Controleur_Dspace_IMC.mdl"
+
+-- Default data type formats
+_floating_point_type(64,IEEE)
+_integer_type(32)
+
+-- No Data Capture blocks within model: use base sample time as sampling period
+sampling_period[0]
+{
+  value:       0.005
+  alias:       "HostService"
+  increment:   0.005
+  unit:        "s"
+}
+
+
+
+-- Type definitions for arrays
+typedef Observateur_Controleur_Dspace_IMC_ArrayDT0_4 flt(64,IEEE)[4]
+typedef Observateur_Controleur_Dspace_IMC_ArrayDT0_16 flt(64,IEEE)[16]
+typedef Observateur_Controleur_Dspace_IMC_ArrayDT0_12 flt(64,IEEE)[12]
+
+
+-- ******** Simulation control variables **************************************
+
+finalTime
+{
+ type:  flt(64,IEEE)*
+ alias: "finalTime"
+ desc:  "Simulation stop time. When reached, simState switches to STOP."
+ flags:  SYSTEM|READONLY
+ unit:  "s"
+}
+
+currentTime
+{
+ type:  flt(64,IEEE)*
+ alias: "currentTime"
+ desc:  "Current simulation time. Increments with execution of Timer Task 1."
+ flags: SYSTEM|READONLY
+ unit:  "s"
+}
+
+modelStepSize
+{
+ type:  flt(64,IEEE)
+ alias: "modelStepSize"
+ desc:  "Fixed step size of the model, sample time of Timer Task 1."
+ flags: SYSTEM|READONLY
+ unit:  "s"
+}
+
+simState
+{
+ type:  int(32)
+ alias: "simState"
+ desc:  "Simulation state: STOP=0 PAUSE=1 RUN=2"
+ flags: SYSTEM
+ unit:  "-"
+}
+
+msg_last_error_no
+{
+ type:  uint(32)
+ alias: "errorNumber"
+ desc:  "Error number of last error message (zero if no error)."
+ unit:  "-"
+ flags: SYSTEM|READONLY
+}
+
+rtiAssertionMode
+{
+ type:  int(32)
+ alias: "rtiAssertionMode"
+ desc:  "Assertion Mode: OFF=0 WARN=1 STOP=2"
+ flags: SYSTEM
+ unit:  "-"
+}
+
+
+-- ******** Model variables ***************************************************
+
+group "Model Root"
+{
+ flags: COLLAPSED
+}
+	group "Consigne" -- block-group
+	{
+	 block: "Constant"
+	 desc:  ""
+	 flags: BLOCK|COLLAPSED
+	}
+		-- Skipping output Out1
+		p_Observateur_Controleur_Dspace_P_real_T_0[2]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Value"
+		 flags:   PARAM
+		}
+
+
+	endgroup -- block-group "Consigne"
+
+	group "Control" -- block-group
+	{
+	 block: "Constant"
+	 desc:  ""
+	 flags: BLOCK|COLLAPSED
+	}
+		-- Skipping output Out1
+		p_Observateur_Controleur_Dspace_P_real_T_0[0]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Value"
+		 flags:   PARAM
+		}
+
+
+	endgroup -- block-group "Control"
+
+	group "Observateur Controleur2" -- block-group
+	{
+	 block: "DiscreteStateSpace"
+	 desc:  ""
+	 flags: BLOCK|COLLAPSED
+	}
+		p_Observateur_Controleur_Dspace_B_real_T_0[2]
+		{
+		 type:    Observateur_Controleur_Dspace_IMC_ArrayDT0_4*
+		 alias:   "Out1"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+		p_Observateur_Controleur_Dspace_P_real_T_0[6]
+		{
+		 type:    Observateur_Controleur_Dspace_IMC_ArrayDT0_16*
+		 alias:   "A"
+		 flags:   PARAM
+		}
+		p_Observateur_Controleur_Dspace_P_real_T_0[22]
+		{
+		 type:    Observateur_Controleur_Dspace_IMC_ArrayDT0_12*
+		 alias:   "B"
+		 flags:   PARAM
+		}
+		p_Observateur_Controleur_Dspace_P_real_T_0[34]
+		{
+		 type:    Observateur_Controleur_Dspace_IMC_ArrayDT0_4*
+		 alias:   "C"
+		 flags:   PARAM
+		}
+		p_Observateur_Controleur_Dspace_P_real_T_0[38]
+		{
+		 type:    Observateur_Controleur_Dspace_IMC_ArrayDT0_4*
+		 alias:   "X0"
+		 flags:   PARAM
+		}
+
+
+	endgroup -- block-group "Observateur Controleur2"
+
+	group "Matrix\nGain " -- block-group
+	{
+	 block: "Gain"
+	 desc:  ""
+	 flags: BLOCK|COLLAPSED
+	}
+		p_Observateur_Controleur_Dspace_B_real_T_0[6]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Out1"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+		p_Observateur_Controleur_Dspace_P_real_T_0[42]
+		{
+		 type:    Observateur_Controleur_Dspace_IMC_ArrayDT0_4*
+		 alias:   "Gain"
+		 flags:   PARAM
+		}
+
+
+	endgroup -- block-group "Matrix\nGain "
+
+	group "Theta\nSetpoint (deg)" -- block-group
+	{
+	 block: "Gain"
+	 desc:  ""
+	 flags: BLOCK|COLLAPSED
+	}
+		p_Observateur_Controleur_Dspace_B_real_T_0[35]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Out1"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+		p_Observateur_Controleur_Dspace_P_real_T_0[63]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Gain"
+		 flags:   PARAM
+		}
+
+
+	endgroup -- block-group "Theta\nSetpoint (deg)"
+
+	group "Mux  " -- block-group
+	{
+	 block: "Mux"
+	 desc:  ""
+	 flags: BLOCK|COLLAPSED
+	}
+		p_Observateur_Controleur_Dspace_B_real_T_0[6]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Out1{SubArray1}"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+		p_Observateur_Controleur_Dspace_B_real_T_0[34]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Out1{SubArray2}"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+		p_Observateur_Controleur_Dspace_B_real_T_0[17]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Out1{SubArray3}"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+
+
+	endgroup -- block-group "Mux  "
+
+	group "Sum1" -- block-group
+	{
+	 block: "Sum"
+	 desc:  ""
+	 flags: BLOCK|COLLAPSED
+	}
+		p_Observateur_Controleur_Dspace_B_real_T_0[34]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Out1"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+
+
+	endgroup -- block-group "Sum1"
+
+	group "Switch" -- block-group
+	{
+	 block: "Switch"
+	 desc:  ""
+	 flags: BLOCK|COLLAPSED
+	}
+		p_Observateur_Controleur_Dspace_B_real_T_0[28]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Out1"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+		p_Observateur_Controleur_Dspace_P_real_T_0[57]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Threshold"
+		 flags:   PARAM
+		}
+
+
+	endgroup -- block-group "Switch"
+
+	group "Transfer Fcn" -- block-group
+	{
+	 block: "TransferFcn"
+	 desc:  ""
+	 flags: BLOCK|COLLAPSED
+	}
+		p_Observateur_Controleur_Dspace_B_real_T_0[0]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Out1"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+		p_Observateur_Controleur_Dspace_P_real_T_0[3]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "A"
+		 flags:   PARAM
+		}
+		p_Observateur_Controleur_Dspace_P_real_T_0[4]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "C"
+		 flags:   PARAM
+		}
+
+
+	endgroup -- block-group "Transfer Fcn"
+
+	group "Zero-Order\nHold" -- block-group
+	{
+	 block: "ZeroOrderHold"
+	 desc:  ""
+	 flags: BLOCK|COLLAPSED
+	}
+		p_Observateur_Controleur_Dspace_B_real_T_0[29]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Out1"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+
+
+	endgroup -- block-group "Zero-Order\nHold"
+
+  
+  
+	group "Degrees to\nRadians" -- subsystem-group
+	{
+	 flags: COLLAPSED
+	 desc:  ""
+	}
+
+		p_Observateur_Controleur_Dspace_B_real_T_0[1]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Radians\nout"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+
+
+		group "Degrees\nin" -- block-group
+		{
+		 block: "Inport"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[0]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "Degrees\nin"
+
+		group "Gain1" -- block-group
+		{
+		 block: "Gain"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[1]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+			p_Observateur_Controleur_Dspace_P_real_T_0[5]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Gain"
+			 flags:   PARAM
+			}
+
+
+		endgroup -- block-group "Gain1"
+
+
+
+	endgroup -- subsystem-group "Degrees to\nRadians"
+  
+  
+	group "Mesure des entrées\net sortie commande" -- subsystem-group
+	{
+	 flags: COLLAPSED
+	 desc:  ""
+	}
+
+		p_Observateur_Controleur_Dspace_B_real_T_0[10]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Theta (rad)"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+		p_Observateur_Controleur_Dspace_B_real_T_0[17]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Alpha (rad)"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+
+
+		group "Vm (V)" -- block-group
+		{
+		 block: "Inport"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[29]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "Vm (V)"
+
+		group "Direction Convention:\n(Right-Hand) system" -- block-group
+		{
+		 block: "Gain"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[30]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+			p_Observateur_Controleur_Dspace_P_real_T_0[58]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Gain"
+			 flags:   PARAM
+			}
+
+
+		endgroup -- block-group "Direction Convention:\n(Right-Hand) system"
+
+		group "gain1" -- block-group
+		{
+		 block: "Gain"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[15]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+			p_Observateur_Controleur_Dspace_P_real_T_0[49]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Gain"
+			 flags:   PARAM
+			}
+
+
+		endgroup -- block-group "gain1"
+
+		group "gain2" -- block-group
+		{
+		 block: "Gain"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[8]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+			p_Observateur_Controleur_Dspace_P_real_T_0[46]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Gain"
+			 flags:   PARAM
+			}
+
+
+		endgroup -- block-group "gain2"
+
+		group "gain3" -- block-group
+		{
+		 block: "Gain"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[32]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+			p_Observateur_Controleur_Dspace_P_real_T_0[61]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Gain"
+			 flags:   PARAM
+			}
+
+
+		endgroup -- block-group "gain3"
+
+		group "gain4" -- block-group
+		{
+		 block: "Gain"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[9]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+			p_Observateur_Controleur_Dspace_P_real_T_0[47]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Gain"
+			 flags:   PARAM
+			}
+
+
+		endgroup -- block-group "gain4"
+
+		group "gain5" -- block-group
+		{
+		 block: "Gain"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[16]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+			p_Observateur_Controleur_Dspace_P_real_T_0[50]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Gain"
+			 flags:   PARAM
+			}
+
+
+		endgroup -- block-group "gain5"
+
+		group "gain6" -- block-group
+		{
+		 block: "Gain"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[33]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+			p_Observateur_Controleur_Dspace_P_real_T_0[62]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Gain"
+			 flags:   PARAM
+			}
+
+
+		endgroup -- block-group "gain6"
+
+		group "alpha" -- block-group
+		{
+		 block: "RateTransition"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[17]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "alpha"
+
+		group "alpha_Volt" -- block-group
+		{
+		 block: "RateTransition"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[19]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "alpha_Volt"
+
+		group "alpha_deg" -- block-group
+		{
+		 block: "RateTransition"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[20]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "alpha_deg"
+
+		group "theta" -- block-group
+		{
+		 block: "RateTransition"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[10]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "theta"
+
+		group "theta_Volt" -- block-group
+		{
+		 block: "RateTransition"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[12]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "theta_Volt"
+
+		group "theta_deg" -- block-group
+		{
+		 block: "RateTransition"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[13]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "theta_deg"
+
+		group "Saturation" -- block-group
+		{
+		 block: "Saturate"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[31]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+			p_Observateur_Controleur_Dspace_P_real_T_0[59]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "UpperLimit"
+			 flags:   PARAM
+			}
+			p_Observateur_Controleur_Dspace_P_real_T_0[60]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "LowerLimit"
+			 flags:   PARAM
+			}
+
+
+		endgroup -- block-group "Saturation"
+
+  
+  
+		group "DS1104DAC_C1" -- subsystem-group
+		{
+		 flags: COLLAPSED
+		 desc:  ""
+		}
+
+
+		endgroup -- subsystem-group "DS1104DAC_C1"
+  
+  
+		group "Position Moteur" -- subsystem-group
+		{
+		 flags: COLLAPSED
+		 desc:  ""
+		}
+
+			p_Observateur_Controleur_Dspace_B_real_T_0[7]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "ADC"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+		endgroup -- subsystem-group "Position Moteur"
+  
+  
+		group "Position pendule" -- subsystem-group
+		{
+		 flags: COLLAPSED
+		 desc:  ""
+		}
+
+			p_Observateur_Controleur_Dspace_B_real_T_0[14]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "ADC"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+		endgroup -- subsystem-group "Position pendule"
+  
+  
+		group "Radians\nto Degrees1" -- subsystem-group
+		{
+		 flags: COLLAPSED
+		 desc:  ""
+		}
+
+			p_Observateur_Controleur_Dspace_B_real_T_0[18]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Degrees\nout"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+			group "Radians\nin" -- block-group
+			{
+			 block: "Inport"
+			 desc:  ""
+			 flags: BLOCK|COLLAPSED
+			}
+				p_Observateur_Controleur_Dspace_B_real_T_0[17]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Out1"
+				 desc:    ""
+				 flags:   OUTPUT|READONLY
+				}
+
+
+			endgroup -- block-group "Radians\nin"
+
+			group "Gain" -- block-group
+			{
+			 block: "Gain"
+			 desc:  ""
+			 flags: BLOCK|COLLAPSED
+			}
+				p_Observateur_Controleur_Dspace_B_real_T_0[18]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Out1"
+				 desc:    ""
+				 flags:   OUTPUT|READONLY
+				}
+				p_Observateur_Controleur_Dspace_P_real_T_0[51]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Gain"
+				 flags:   PARAM
+				}
+
+
+			endgroup -- block-group "Gain"
+
+
+
+		endgroup -- subsystem-group "Radians\nto Degrees1"
+  
+  
+		group "Radians\nto Degrees2" -- subsystem-group
+		{
+		 flags: COLLAPSED
+		 desc:  ""
+		}
+
+			p_Observateur_Controleur_Dspace_B_real_T_0[11]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Degrees\nout"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+			group "Radians\nin" -- block-group
+			{
+			 block: "Inport"
+			 desc:  ""
+			 flags: BLOCK|COLLAPSED
+			}
+				p_Observateur_Controleur_Dspace_B_real_T_0[10]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Out1"
+				 desc:    ""
+				 flags:   OUTPUT|READONLY
+				}
+
+
+			endgroup -- block-group "Radians\nin"
+
+			group "Gain" -- block-group
+			{
+			 block: "Gain"
+			 desc:  ""
+			 flags: BLOCK|COLLAPSED
+			}
+				p_Observateur_Controleur_Dspace_B_real_T_0[11]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Out1"
+				 desc:    ""
+				 flags:   OUTPUT|READONLY
+				}
+				p_Observateur_Controleur_Dspace_P_real_T_0[48]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Gain"
+				 flags:   PARAM
+				}
+
+
+			endgroup -- block-group "Gain"
+
+
+
+		endgroup -- subsystem-group "Radians\nto Degrees2"
+
+		p_Observateur_Controleur_Dspace_B_real_T_0[33]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Control Signal"
+		 origin:  "Observateur_Controleur_Dspace_IMC/Mesure des entrées\net sortie commande/gain6/Out1"
+		 flags:   LABEL|READONLY
+		}
+
+	endgroup -- subsystem-group "Mesure des entrées\net sortie commande"
+  
+  
+	group "RTI Data" -- subsystem-group
+	{
+	 flags: COLLAPSED
+	 desc:  ""
+	}
+
+
+	endgroup -- subsystem-group "RTI Data"
+  
+  
+	group "Validation du signal de commande " -- subsystem-group
+	{
+	 flags: COLLAPSED
+	 desc:  ""
+	}
+
+		p_Observateur_Controleur_Dspace_B_real_T_0[27]
+		{
+		 type:    flt(64,IEEE)*
+		 alias:   "Enable"
+		 desc:    ""
+		 flags:   OUTPUT|READONLY
+		}
+
+
+		group "Alpha" -- block-group
+		{
+		 block: "Inport"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[17]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "Alpha"
+
+		group "Abs" -- block-group
+		{
+		 block: "Abs"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[25]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "Abs"
+
+		group "Abs1" -- block-group
+		{
+		 block: "Abs"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[22]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "Abs1"
+
+		group "Alpha\nReached\nzero" -- block-group
+		{
+		 block: "Constant"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			-- Skipping output Out1
+			p_Observateur_Controleur_Dspace_P_real_T_0[52]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Value"
+			 flags:   PARAM
+			}
+
+
+		endgroup -- block-group "Alpha\nReached\nzero"
+
+		group "Alpha\nThreshold" -- block-group
+		{
+		 block: "Constant"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			-- Skipping output Out1
+			p_Observateur_Controleur_Dspace_P_real_T_0[56]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Value"
+			 flags:   PARAM
+			}
+
+
+		endgroup -- block-group "Alpha\nThreshold"
+
+		group "Alpha\nThreshold1" -- block-group
+		{
+		 block: "Constant"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			-- Skipping output Out1
+			p_Observateur_Controleur_Dspace_P_real_T_0[54]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Value"
+			 flags:   PARAM
+			}
+
+
+		endgroup -- block-group "Alpha\nThreshold1"
+
+		group "Logical\nOperator" -- block-group
+		{
+		 block: "Logic"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[27]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "Logical\nOperator"
+
+		group "Relational\nOperator" -- block-group
+		{
+		 block: "RelationalOperator"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[26]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "Relational\nOperator"
+
+		group "Relational\nOperator1" -- block-group
+		{
+		 block: "RelationalOperator"
+		 desc:  ""
+		 flags: BLOCK|COLLAPSED
+		}
+			p_Observateur_Controleur_Dspace_B_real_T_0[23]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+		endgroup -- block-group "Relational\nOperator1"
+
+  
+  
+		group "Enabled\nSubsystem" -- subsystem-group
+		{
+		 flags: COLLAPSED
+		 desc:  ""
+		}
+
+			p_Observateur_Controleur_Dspace_B_real_T_0[36]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Out1"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+			group "In1" -- block-group
+			{
+			 block: "Inport"
+			 desc:  ""
+			 flags: BLOCK|COLLAPSED
+			}
+				p_Observateur_Controleur_Dspace_B_real_T_0[36]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Out1"
+				 desc:    ""
+				 flags:   OUTPUT|READONLY
+				}
+
+
+			endgroup -- block-group "In1"
+
+			group "Enable" -- block-group
+			{
+			 block: "EnablePort"
+			 desc:  ""
+			 flags: BLOCK|COLLAPSED
+			}
+
+
+
+			endgroup -- block-group "Enable"
+
+
+
+		endgroup -- subsystem-group "Enabled\nSubsystem"
+  
+  
+		group "Radians\nto Degrees1" -- subsystem-group
+		{
+		 flags: COLLAPSED
+		 desc:  ""
+		}
+
+			p_Observateur_Controleur_Dspace_B_real_T_0[21]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Degrees\nout"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+			group "Radians\nin" -- block-group
+			{
+			 block: "Inport"
+			 desc:  ""
+			 flags: BLOCK|COLLAPSED
+			}
+				p_Observateur_Controleur_Dspace_B_real_T_0[17]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Out1"
+				 desc:    ""
+				 flags:   OUTPUT|READONLY
+				}
+
+
+			endgroup -- block-group "Radians\nin"
+
+			group "Gain" -- block-group
+			{
+			 block: "Gain"
+			 desc:  ""
+			 flags: BLOCK|COLLAPSED
+			}
+				p_Observateur_Controleur_Dspace_B_real_T_0[21]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Out1"
+				 desc:    ""
+				 flags:   OUTPUT|READONLY
+				}
+				p_Observateur_Controleur_Dspace_P_real_T_0[53]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Gain"
+				 flags:   PARAM
+				}
+
+
+			endgroup -- block-group "Gain"
+
+
+
+		endgroup -- subsystem-group "Radians\nto Degrees1"
+  
+  
+		group "Radians\nto Degrees4" -- subsystem-group
+		{
+		 flags: COLLAPSED
+		 desc:  ""
+		}
+
+			p_Observateur_Controleur_Dspace_B_real_T_0[24]
+			{
+			 type:    flt(64,IEEE)*
+			 alias:   "Degrees\nout"
+			 desc:    ""
+			 flags:   OUTPUT|READONLY
+			}
+
+
+			group "Radians\nin" -- block-group
+			{
+			 block: "Inport"
+			 desc:  ""
+			 flags: BLOCK|COLLAPSED
+			}
+				p_Observateur_Controleur_Dspace_B_real_T_0[17]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Out1"
+				 desc:    ""
+				 flags:   OUTPUT|READONLY
+				}
+
+
+			endgroup -- block-group "Radians\nin"
+
+			group "Gain" -- block-group
+			{
+			 block: "Gain"
+			 desc:  ""
+			 flags: BLOCK|COLLAPSED
+			}
+				p_Observateur_Controleur_Dspace_B_real_T_0[24]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Out1"
+				 desc:    ""
+				 flags:   OUTPUT|READONLY
+				}
+				p_Observateur_Controleur_Dspace_P_real_T_0[55]
+				{
+				 type:    flt(64,IEEE)*
+				 alias:   "Gain"
+				 flags:   PARAM
+				}
+
+
+			endgroup -- block-group "Gain"
+
+
+
+		endgroup -- subsystem-group "Radians\nto Degrees4"
+
+
+	endgroup -- subsystem-group "Validation du signal de commande "
+
+
+
+
+endgroup -- "Model Root"
+-- ******** Tunable Parameters ************************************************
+
+-- InlineParameters is off: no separate group for Tunable Parameters
+
+
+-- ******** State Machine Data ************************************************
+
+-- No Stateflow chart within the model.
+
+
+-- ******** Data Store Memories ***********************************************
+
+-- No Data Store Memories within the model.
+
+
+-- ******** Labels ************************************************************
+
+group "Labels"
+{
+ flags: COLLAPSED
+}
+	p_Observateur_Controleur_Dspace_B_real_T_0[33]
+	{
+	 type:    flt(64,IEEE)*
+	 alias:   "Control Signal"
+	 origin:  "Observateur_Controleur_Dspace_IMC/Mesure des entrées\net sortie commande/gain6/Out1"
+	 flags:   LABEL|READONLY
+	}
+
+endgroup
+
+-- ******** RTT Dynamic Variables *********************************************
+
+-- Generation of RTT Dynamic Variables turned off with EnableRealTimeTesting option.
+
+-- ******** User variables from model_usr.trc *********************************
+
+-- RTI_USR_TRC_BEGIN
+
+-- No user file Observateur_Controleur_Dspace_IMC_usr.trc found.
+
+-- RTI_USR_TRC_END
+
+-- ******** Task Information variables ****************************************
+
+group "Task Info"
+{
+ flags: COLLAPSED
+}
+  group "Timer Task 1"
+  {
+   flags: COLLAPSED
+  }
+
+  pRti_TIMERA_STime
+  {
+   type:  flt(64,IEEE)*
+   alias: "sampleTime"
+   flags: SYSTEM|READONLY
+  }
+  pRti_TIMERA_TTime
+  {
+   type:  flt(64,IEEE)*
+   alias: "turnaroundTime"
+   flags: SYSTEM|READONLY
+  }
+  pRti_TIMERA_TState
+  {
+   type:  int(32)*
+   alias: "state"
+   flags: SYSTEM|READONLY
+  }
+  pRti_TIMERA_OType
+  {
+   type:  int(32)*
+   alias: "overrunCheckType"
+   flags: SYSTEM|READONLY
+  }
+  pRti_TIMERA_OMax
+  {
+   type:  int(32)*
+   alias: "overrunQueueMax"
+   flags: SYSTEM|READONLY
+  }
+  pRti_TIMERA_ORpt
+  {
+   type:  int(32)*
+   alias: "overrunQueueCount"
+   flags: SYSTEM|READONLY
+  }
+  pRti_TIMERA_OCnt
+  {
+   type:  int(32)*
+   alias: "overrunCount"
+   flags: SYSTEM|READONLY
+  }
+  pRti_TIMERA_TCnt
+  {
+   type:  flt(64,IEEE)*
+   alias: "taskCallCount"
+   flags: SYSTEM|READONLY
+  }
+  pRti_TIMERA_Prio
+  {
+   type:  int(32)*
+   alias: "priority"
+   flags: SYSTEM|READONLY
+  }
+  endgroup
+
+
+endgroup
+
+-- ******** [EOF] *************************************************************
+
+
+

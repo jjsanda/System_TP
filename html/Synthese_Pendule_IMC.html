@@ -1,0 +1,413 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Synthese_Pendule_IMC</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-09"><meta name="DC.source" content="Synthese_Pendule_IMC.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Pendulum modelling (see the Quanser documents)</a></li><li><a href="#4">Feedback System Dynamics</a></li><li><a href="#5">Feedback System Specification</a></li><li><a href="#6">Design of the Observer/Controler: Continuous case</a></li><li><a href="#7">Design of the Observer/Controler: Distcrete case</a></li></ul></div><pre class="codeinput"><span class="comment">%**************************************************************************</span>
+<span class="comment">% Observer-Controler design of Inverted Pendulum</span>
+<span class="comment">%</span>
+<span class="comment">%**************************************************************************</span>
+clear <span class="string">all</span>
+<span class="comment">%**************************************************************************</span>
+</pre><h2>Pendulum modelling (see the Quanser documents)<a name="2"></a></h2><pre class="codeinput"><span class="comment">%**************************************************************************</span>
+
+T_ech=0.01      <span class="comment">% sampling period</span>
+Rm = 2.6;
+Kt = .00767;    <span class="comment">% Motor Torque Constant (N.m/A)</span>
+Km =  .00767;   <span class="comment">% Motor Back-EMF Constant (V.s/rd)</span>
+g=9.81;         <span class="comment">% Internal Gear Ratio (of the Planetary Gearbox)</span>
+L = 0.335 / 2;  <span class="comment">% Length of Pendulum centre of mass (meters)</span>
+m = 0.125;      <span class="comment">% Mass of Pendulum (kg)</span>
+r = 0.158;
+Jm = 3.9e-7
+Jtach = 7e-8
+Jmotor = Jm + Jtach;
+<span class="comment">% External Gears Inertias (kg.m^2)</span>
+<span class="comment">% J24: 24-tooth Gear Inertia (on the Motor Shaft)</span>
+m24 = .005; <span class="comment">% mass (kg)</span>
+r24 = 0.5 / 2 * 0.0254; <span class="comment">% radius (m)</span>
+J24 = m24 * r24^2 / 2;
+<span class="comment">% J72: 72-tooth Gear Inertia (on the Potentiometer Shaft)</span>
+m72 = .030; <span class="comment">% mass (kg)</span>
+r72 = 1.5 / 2 * 0.0254; <span class="comment">% radius (m)</span>
+J72 = m72 * r72^2 / 2;
+<span class="comment">% J120: 120-tooth Gear Inertia (on the Load Shaft)</span>
+m120 = .083; <span class="comment">% mass (kg)</span>
+r120 = 2.5 / 2 * 0.0254; <span class="comment">% radius (m)</span>
+J120 = m120 * r120^2 / 2;
+</pre><pre class="codeoutput">
+T_ech =
+
+    0.0100
+
+
+Jm =
+
+   3.9000e-07
+
+
+Jtach =
+
+   7.0000e-08
+
+</pre><pre class="codeinput">Kgi = 14;
+Beq = 4e-3;
+Kge = 5;
+Kg = Kgi * Kge;
+Jeq = J24 + 2 * J72 + J120 + Kg^2 * Jmotor
+
+
+<span class="comment">% Intermediary parameters</span>
+
+a = Jeq + m*r^2;
+b = m*r*L;
+c = 4/3 * m*L^2;
+d = m*g*L;
+
+E = a*c - b^2;
+
+P = Kt*Kg;
+G = (P*Km*Kg + Beq*Rm) / Rm;
+
+A = zeros (4,4);
+B = zeros (4,1);
+C = zeros (2,4);
+D = zeros (4,1);
+
+A(1,3) = 1;
+A(2,4) = 1;
+A(3,2) = b*d / E;
+A(3,3) = -G*c / E;
+A(4,2) = a*d / E;
+A(4,3) = -G*b / E;
+
+B(3,1) = c*P / (E*Rm);
+B(4,1) = b*P / (E*Rm);
+
+C=[1 0 0 0;
+   0 1 0 0];
+D=[ 0 0 ]';
+</pre><pre class="codeoutput">
+Jeq =
+
+    0.0023
+
+</pre><h2>Feedback System Dynamics<a name="4"></a></h2><p>Order of system is four and we have one input signal two output signals <img src="Synthese_Pendule_IMC_eq60525.png" alt="$$\rightarrow $$"> transfer function is a matrix of (2X1) We can consider it as a system of second order followed by two systems of first oredr <img src="Synthese_Pendule_IMC_eq60525.png" alt="$$\rightarrow $$"> <img src="Synthese_Pendule_IMC_eq24824.png" alt="$$ F(s)=(\frac{\omega_n^{2}}{s^2+2\zeta \omega_n +\omega_n{^2}}\frac{1}{1+\tau_1 s}\frac{1}{1+\tau_2 s}) M(s) $$">. Please note the eigenvalues of state matrix A <img src="Synthese_Pendule_IMC_eq98406.png" alt="$$ v_p=[0,-38.1125,7,-6] $$"> which give us information on its proper dynamic necessary to respect. In the following we give some specifications on the desired feedback system dynamic. Overshoot <img src="Synthese_Pendule_IMC_eq76960.png" alt="$$ 15\% $$"> <img src="Synthese_Pendule_IMC_eq15092.png" alt="$$ \Rightarrow M_p=0.15 $$"> \\</p><h2>Feedback System Specification<a name="5"></a></h2><div><ul><li>Response time of <img src="Synthese_Pendule_IMC_eq71959.png" alt="$$2\% $$">  <img src="Synthese_Pendule_IMC_eq46960.png" alt="$$ \Rightarrow t_s=2.2 [sec] $$"></li><li>Desired dominant poles : <img src="Synthese_Pendule_IMC_eq02121.png" alt="$$ p_1=\sigma_d + j\omega_d, p_2=\sigma_d - j\omega_d $$"></li><li>Poles of aperiodic polynomials (fast dynamic): p3=-38, p4=-38.0001</li><li><img src="Synthese_Pendule_IMC_eq18899.png" alt="$$ \zeta=-\frac{ln(M_p)}{\sqrt{ln(M_p)^2+\pi^2}}, \omega_n=-\frac{ln(0.02)}{ t_s\zeta}, \sigma_d = \zeta \omega_n, \omega_d=\omega_n\sqrt{1-\zeta^2} $$"></li></ul></div><pre class="codeinput"><span class="comment">%**************************************************************************</span>
+
+pole_max=min(eig(A))                    <span class="comment">% on identifie la dynamique maximale du syst&egrave;me afin de placer les p&ocirc;les en boucle ferm&eacute;e actioneurs</span>
+Mp=0.15;                                <span class="comment">% Overshoot</span>
+ts=2.2;                                 <span class="comment">% Response time</span>
+z=-log(Mp)/(sqrt(log(Mp)^2+pi^2));      <span class="comment">% damping coefficient</span>
+wn=-log(0.02)/(ts*z);                   <span class="comment">% proper frequency</span>
+sd=z*wn;                                <span class="comment">% real part of dominant poles</span>
+wd=wn^(1-z^2);                          <span class="comment">% imaginary part of dominant poles</span>
+
+p1=-sd+i*wd;                            <span class="comment">% first dominant pole of feedback loop</span>
+p2=-sd-i*wd;                            <span class="comment">% second dominant pole of feedback loop</span>
+p3=pole_max;                            <span class="comment">% fast dynamic pole</span>
+p4=pole_max+0.0001;                     <span class="comment">% fast dynamic pole</span>
+Pc=[p1 p2 p3 p4];                       <span class="comment">% Vector of feedback loop</span>
+</pre><pre class="codeoutput">
+pole_max =
+
+  -38.1125
+
+</pre><h2>Design of the Observer/Controler: Continuous case<a name="6"></a></h2><div><ul><li><img src="Synthese_Pendule_IMC_eq12678.png" alt="$$\dot{x}(t)=Ax(t)+Bu(t) $$"> <img src="Synthese_Pendule_IMC_eq60525.png" alt="$$\rightarrow $$"> open loop state space model</li><li><img src="Synthese_Pendule_IMC_eq06581.png" alt="$$ u(t)= -Kc x(t) $$"> <img src="Synthese_Pendule_IMC_eq14587.png" alt="$$ \rightarrow $$"> control signal ( we supose that the system state is mesurable which will be relaxed in the following )</li><li><img src="Synthese_Pendule_IMC_eq86309.png" alt="$$\dot{\hat{x}}(t)=A\hat{x}(t)+Bu(t) + Ko(y(t)- \hat{y}(t)) $$"> <img src="Synthese_Pendule_IMC_eq14587.png" alt="$$ \rightarrow $$"> observer equations</li><li><img src="Synthese_Pendule_IMC_eq06581.png" alt="$$ u(t)= -Kc x(t) $$"> <img src="Synthese_Pendule_IMC_eq10108.png" alt="$$ \Leftarrow $$">  Controller Equation</li><li>Replacing the controller equation to the observer one gives:  <img src="Synthese_Pendule_IMC_eq39648.png" alt="$$ \dot{\hat{x}}(t)=A\hat{x}(t)-BKc\hat{x}(t) + Ko(y(t)- C\hat{x}(t)) $$"> <img src="Synthese_Pendule_IMC_eq00207.png" alt="$$ \Rightarrow $$">  <img src="Synthese_Pendule_IMC_eq67259.png" alt="$$ \dot{\hat{x}}(t)= (A-BKc-KoC)\hat{x}(t)+ Koy(t) $$"> <img src="Synthese_Pendule_IMC_eq10108.png" alt="$$ \Leftarrow $$"> Observer Equation</li></ul></div><pre class="codeinput"><span class="comment">%**************************************************************************</span>
+
+Kc=place(A,B,Pc);                       <span class="comment">% corresponding feedback gains</span>
+
+Po=5*Pc                                 <span class="comment">% Observer poles</span>
+Ko=place(A',C',Po);
+Ko=Ko';                                 <span class="comment">% Observer feedback gains</span>
+Ao=A-B*Kc-Ko*C                          <span class="comment">% Observer state matrix</span>
+Bo=Ko                                   <span class="comment">% Observer control matrix</span>
+Co=eye(4,4)                             <span class="comment">% Observer output matrix</span>
+Do=zeros(4,2)                           <span class="comment">% Observer output/control matrix</span>
+X0=[0 0 0 0]';
+
+<span class="comment">% %**************************************************************************</span>
+</pre><pre class="codeoutput">
+Po =
+
+   1.0e+02 *
+
+  -0.0889 + 0.1236i  -0.0889 - 0.1236i  -1.9056            -1.9056          
+
+
+Ao =
+
+   1.0e+03 *
+
+   -0.1854    0.0362    0.0010         0
+    0.0073   -0.1763         0    0.0010
+    1.0998    2.5578    0.1337   -0.3018
+    1.4711   -0.3526    0.0946   -0.2135
+
+
+Bo =
+
+   1.0e+03 *
+
+    0.1854   -0.0362
+   -0.0073    0.1763
+   -0.7930   -5.5030
+   -1.2540   -1.6871
+
+
+Co =
+
+     1     0     0     0
+     0     1     0     0
+     0     0     1     0
+     0     0     0     1
+
+
+Do =
+
+     0     0
+     0     0
+     0     0
+     0     0
+
+</pre><h2>Design of the Observer/Controler: Distcrete case<a name="7"></a></h2><div><ul><li><img src="Synthese_Pendule_IMC_eq09217.png" alt="$$ x_{k+1}(t)=A_d x_k+B_d u_k $$"> <img src="Synthese_Pendule_IMC_eq60525.png" alt="$$\rightarrow $$"> open loop state space model</li><li><img src="Synthese_Pendule_IMC_eq05338.png" alt="$$ u_k= -Kc_d x_k $$"> <img src="Synthese_Pendule_IMC_eq14587.png" alt="$$ \rightarrow $$"> control signal (we supose that the system state is mesurable which will be relaxed in the following)</li><li><img src="Synthese_Pendule_IMC_eq18968.png" alt="$$ \hat{x}_{k+1} =A_d \hat{x}_k+B_d u_{k+1} + Ko_d(y_k- \hat{y}_k) $$"> <img src="Synthese_Pendule_IMC_eq14587.png" alt="$$ \rightarrow $$"> observer equations</li><li><img src="Synthese_Pendule_IMC_eq05338.png" alt="$$ u_k= -Kc_d x_k $$"> <img src="Synthese_Pendule_IMC_eq14587.png" alt="$$ \rightarrow $$">  controller equations</li><li>Replacing the controller equation to the observer one gives:  <img src="Synthese_Pendule_IMC_eq96161.png" alt="$$ \hat{x}_{k+1}(t)=A_d \hat{x}_k - B_d Kc_d \hat{x}_k + Ko_d(y_k- C\hat{x}_k) \ldots $$">  <img src="Synthese_Pendule_IMC_eq10717.png" alt="$$ \hat{x}_{k+1}= (A_d-B_d Kc_d-Ko_dC)\hat{x}_k(t)+ Ko_d y_k $$"></li></ul></div><p>%**************************************************************************</p><pre class="codeinput">[Ad,Bd]=c2d(A,B,T_ech);                 <span class="comment">% System discretisation</span>
+Cd=C;
+Dd=D;
+
+<span class="comment">% %**************************************************************************</span>
+<span class="comment">%%Design of Observer/Controler: Discrete case</span>
+<span class="comment">% %**************************************************************************</span>
+
+Pcd=exp(T_ech*Pc);                      <span class="comment">% Controler pole matching</span>
+Pod=exp(T_ech*Po);                      <span class="comment">% Obsrver pole matching</span>
+Kc_d=place(Ad,Bd,Pcd);                  <span class="comment">% Controler feedback gain -&gt;discrete case</span>
+Ko_d=place(Ad',Cd',Pod);                <span class="comment">% Observer feedback gains</span>
+Ko_d=Ko_d';
+Aod=Ad-Bd*Kc_d-Ko_d*Cd;
+Bod=Ko_d;
+Cod=-Kc_d;
+Dod=zeros(1,2);
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%**************************************************************************
+% Observer-Controler design of Inverted Pendulum
+% 
+%**************************************************************************
+clear all
+%**************************************************************************
+%% Pendulum modelling (see the Quanser documents)
+%**************************************************************************
+
+T_ech=0.01      % sampling period
+Rm = 2.6;
+Kt = .00767;    % Motor Torque Constant (N.m/A)
+Km =  .00767;   % Motor Back-EMF Constant (V.s/rd)
+g=9.81;         % Internal Gear Ratio (of the Planetary Gearbox)           
+L = 0.335 / 2;  % Length of Pendulum centre of mass (meters) 
+m = 0.125;      % Mass of Pendulum (kg)
+r = 0.158;
+Jm = 3.9e-7
+Jtach = 7e-8
+Jmotor = Jm + Jtach;
+% External Gears Inertias (kg.m^2)
+% J24: 24-tooth Gear Inertia (on the Motor Shaft)
+m24 = .005; % mass (kg)
+r24 = 0.5 / 2 * 0.0254; % radius (m)
+J24 = m24 * r24^2 / 2;
+% J72: 72-tooth Gear Inertia (on the Potentiometer Shaft)
+m72 = .030; % mass (kg)
+r72 = 1.5 / 2 * 0.0254; % radius (m)
+J72 = m72 * r72^2 / 2;
+% J120: 120-tooth Gear Inertia (on the Load Shaft)
+m120 = .083; % mass (kg)
+r120 = 2.5 / 2 * 0.0254; % radius (m)
+J120 = m120 * r120^2 / 2;
+%%
+
+Kgi = 14;
+Beq = 4e-3;
+Kge = 5;
+Kg = Kgi * Kge;
+Jeq = J24 + 2 * J72 + J120 + Kg^2 * Jmotor
+
+
+% Intermediary parameters
+
+a = Jeq + m*r^2;
+b = m*r*L;
+c = 4/3 * m*L^2;
+d = m*g*L;
+
+E = a*c - b^2;
+
+P = Kt*Kg;
+G = (P*Km*Kg + Beq*Rm) / Rm;
+
+A = zeros (4,4);
+B = zeros (4,1);
+C = zeros (2,4);
+D = zeros (4,1);
+
+A(1,3) = 1;
+A(2,4) = 1;
+A(3,2) = b*d / E;
+A(3,3) = -G*c / E;
+A(4,2) = a*d / E;
+A(4,3) = -G*b / E;
+
+B(3,1) = c*P / (E*Rm);
+B(4,1) = b*P / (E*Rm);
+
+C=[1 0 0 0;
+   0 1 0 0];
+D=[ 0 0 ]';
+
+%% Feedback System Dynamics 
+% Order of system is four and we have one input signal two output signals $$\rightarrow $$ transfer function is a matrix of (2X1) 
+% We can consider it as a system of second order followed by two systems of
+% first oredr $$\rightarrow $$ $$ F(s)=(\frac{\omega_n^{2}}{s^2+2\zeta \omega_n
+% +\omega_n{^2}}\frac{1}{1+\tau_1 s}\frac{1}{1+\tau_2 s}) M(s) $$.
+% Please note the eigenvalues of state matrix A $$ v_p=[0,-38.1125,7,-6] $$ which give us information on its proper dynamic
+% necessary to respect. In the following we give some specifications on the desired feedback system dynamic.
+% Overshoot $$ 15\% $$ $$ \Rightarrow M_p=0.15 $$ \\
+%% Feedback System Specification 
+% *  Response time of $$2\% $$  $$ \Rightarrow t_s=2.2 [sec] $$ 
+% *  Desired dominant poles : $$ p_1=\sigma_d + j\omega_d, p_2=\sigma_d - j\omega_d $$
+% *  Poles of aperiodic polynomials (fast dynamic): p3=-38, p4=-38.0001
+% *  $$ \zeta=-\frac{ln(M_p)}{\sqrt{ln(M_p)^2+\pi^2}}, \omega_n=-\frac{ln(0.02)}{ t_s\zeta}, \sigma_d = \zeta \omega_n, \omega_d=\omega_n\sqrt{1-\zeta^2} $$ 
+% 
+%**************************************************************************
+
+pole_max=min(eig(A))                    % on identifie la dynamique maximale du système afin de placer les pôles en boucle fermée actioneurs
+Mp=0.15;                                % Overshoot
+ts=2.2;                                 % Response time
+z=-log(Mp)/(sqrt(log(Mp)^2+pi^2));      % damping coefficient
+wn=-log(0.02)/(ts*z);                   % proper frequency
+sd=z*wn;                                % real part of dominant poles
+wd=wn^(1-z^2);                          % imaginary part of dominant poles
+
+p1=-sd+i*wd;                            % first dominant pole of feedback loop
+p2=-sd-i*wd;                            % second dominant pole of feedback loop 
+p3=pole_max;                            % fast dynamic pole 
+p4=pole_max+0.0001;                     % fast dynamic pole
+Pc=[p1 p2 p3 p4];                       % Vector of feedback loop  
+
+%% Design of the Observer/Controler: Continuous case
+% * $$\dot{x}(t)=Ax(t)+Bu(t) $$ $$\rightarrow $$ open loop state space model
+% * $$ u(t)= -Kc x(t) $$ $$ \rightarrow $$ control signal ( we supose that the system state is
+% mesurable which will be relaxed in the following )
+% *  $$\dot{\hat{x}}(t)=A\hat{x}(t)+Bu(t) + Ko(y(t)- \hat{y}(t)) $$ $$ \rightarrow $$
+% observer equations
+% *  $$ u(t)= -Kc x(t) $$ $$ \Leftarrow $$  Controller Equation
+% * Replacing the controller equation to the observer one gives:  $$
+% \dot{\hat{x}}(t)=A\hat{x}(t)-BKc\hat{x}(t) + Ko(y(t)- C\hat{x}(t)) $$ $$ \Rightarrow $$
+%  $$ \dot{\hat{x}}(t)= (A-BKc-KoC)\hat{x}(t)+ Koy(t) $$ $$ \Leftarrow $$ Observer Equation
+%**************************************************************************
+
+Kc=place(A,B,Pc);                       % corresponding feedback gains
+
+Po=5*Pc                                 % Observer poles
+Ko=place(A',C',Po);
+Ko=Ko';                                 % Observer feedback gains 
+Ao=A-B*Kc-Ko*C                          % Observer state matrix
+Bo=Ko                                   % Observer control matrix
+Co=eye(4,4)                             % Observer output matrix
+Do=zeros(4,2)                           % Observer output/control matrix
+X0=[0 0 0 0]';
+
+% %**************************************************************************
+%% Design of the Observer/Controler: Distcrete case
+% * $$ x_{k+1}(t)=A_d x_k+B_d u_k $$ $$\rightarrow $$ open loop state space model
+% * $$ u_k= -Kc_d x_k $$ $$ \rightarrow $$ control signal (we supose that the system state is
+% mesurable which will be relaxed in the following)
+% * $$ \hat{x}_{k+1} =A_d \hat{x}_k+B_d u_{k+1} + Ko_d(y_k- \hat{y}_k) $$ $$ \rightarrow $$
+% observer equations
+% *  $$ u_k= -Kc_d x_k $$ $$ \rightarrow $$  controller equations
+% * Replacing the controller equation to the observer one gives:  $$ \hat{x}_{k+1}(t)=A_d \hat{x}_k - B_d Kc_d \hat{x}_k + Ko_d(y_k- C\hat{x}_k) \ldots $$
+%  $$ \hat{x}_{k+1}= (A_d-B_d Kc_d-Ko_dC)\hat{x}_k(t)+ Ko_d y_k $$
+%
+% %**************************************************************************
+
+[Ad,Bd]=c2d(A,B,T_ech);                 % System discretisation       
+Cd=C;
+Dd=D;
+
+% %**************************************************************************
+%%Design of Observer/Controler: Discrete case 
+% %**************************************************************************
+ 
+Pcd=exp(T_ech*Pc);                      % Controler pole matching
+Pod=exp(T_ech*Po);                      % Obsrver pole matching
+Kc_d=place(Ad,Bd,Pcd);                  % Controler feedback gain ->discrete case
+Ko_d=place(Ad',Cd',Pod);                % Observer feedback gains
+Ko_d=Ko_d';
+Aod=Ad-Bd*Kc_d-Ko_d*Cd;              
+Bod=Ko_d;
+Cod=-Kc_d;
+Dod=zeros(1,2);
+
+
+
+##### SOURCE END #####
+--></body></html>

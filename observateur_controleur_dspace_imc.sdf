@@ -1,0 +1,14 @@
+[System]
+Version=2.1
+SystemType=SingleProcessorSystem
+DAQService=HostService
+Status=Start
+RTP=Master
+
+[Master]
+Type=DS1104
+State=Enabled
+ServiceID=1
+BoardName=unknown
+File=observateur_controleur_dspace_imc.ppc
+ID=F03C282C-119E-49FD-BFE0-D137C313A7D0
