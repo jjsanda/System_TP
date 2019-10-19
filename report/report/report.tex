@@ -1,17 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % University/School Laboratory Report
 % LaTeX Template
-% Version 3.1 (25/3/14)
-%
-% This template has been downloaded from:
-% http://www.LaTeXTemplates.com
-%
-% Original author:
-% Linux and Unix Users Group at Virginia Tech Wiki 
-% (https://vtluug.org/wiki/Example_LaTeX_chem_lab_report)
-%
-% License:
-% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% Version 1 (19/10/2019)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -22,7 +12,7 @@
 \documentclass{article}
 
 \usepackage[version=3]{mhchem} % Package for chemical equation typesetting
-\usepackage{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
+\usepackage[inter-unit-product =\cdot]{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
 \usepackage{graphicx} % Required for the inclusion of images
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
@@ -30,6 +20,7 @@
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
 
 \renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
+
 
 %\usepackage{times} % Uncomment to use the Times New Roman font
 
@@ -49,7 +40,6 @@
 
 \begin{center}
 \begin{tabular}{l r}
-Date Performed: & January 1, 2012 \\ % Date the experiment was performed
 Proposed by & Arben Cela % Instructor/supervisor
 \end{tabular}
 \end{center}
@@ -59,16 +49,15 @@ Proposed by & Arben Cela % Instructor/supervisor
 % Abstract text
 % \end{abstract}
 
+\setlength{\parindent}{4em}
+\setlength{\parskip}{1em}
+\renewcommand{\baselinestretch}{2.0}
+
 %----------------------------------------------------------------------------------------
 %	SECTION 1
 %----------------------------------------------------------------------------------------
 
-\section{Objective}
-
-To determine the atomic weight of magnesium via its reaction with oxygen and to study the stoichiometry of the reaction (as defined in \ref{definitions}):
-
-\begin{center}\ce{2 Mg + O2 -> 2 MgO}\end{center}
-
+\section{Incroduction}
 % If you have more than one objective, uncomment the below:
 %\begin{description}
 %\item[First Objective] \hfill \\
@@ -77,20 +66,17 @@ To determine the atomic weight of magnesium via its reaction with oxygen and to 
 %Objective 2 text
 %\end{description}
 
-\subsection{Definitions}
-\label{definitions}
-\begin{description}
-\item[Stoichiometry]
-The relationship between the relative quantities of substances taking part in a reaction or forming a compound, typically a ratio of whole integers.
-\item[Atomic mass]
-The mass of an atom of a chemical element expressed in atomic mass units. It is approximately equivalent to the number of protons and neutrons in the atom (the mass number) or to the average number allowing for the relative abundances of different isotopes. 
-\end{description} 
+
+\paragraph{}
+The objective of this work is to stabilize the inverted pendulum in an upright position. For stabilization is used feedback controller based on the pole placement method. The pendulum consists of a driven arm. This arm rotates in the horizontal plane, and a pendulum attached to that arm is free to rotate in the vertical plane $[-\frac{\pi}{8}, +\frac{\pi}{8}]$. The arm has powered by the $\pm \si{10\volt}$ DC motor with constraints movement around. 
+\paragraph{}
+The system is exceptionally non-linear due to the gravitational forces that affect him. To realize the stabilization of this system, we have the possibility to use two sensors that measure with a satisfactory defect. The first sensor measures the position of the rod angle relative to the vertical position, and the second sensor measures the position of the arm motor angle. Both sensors have powered a voltage of $\pm \si{1,33\volt}$.
  
 %----------------------------------------------------------------------------------------
 %	SECTION 2
 %----------------------------------------------------------------------------------------
 
-\section{Experimental Data}
+\section{Model of a rotary pendulum}
 
 \begin{tabular}{ll}
 Mass of empty crucible & \SI{7.28}{\gram}\\
