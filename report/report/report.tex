@@ -16,6 +16,9 @@
 \usepackage{graphicx} % Required for the inclusion of images
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
+\usepackage{breqn} %Required for dmath
+
+\usepackage{graphicx} %Required for image
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
 
@@ -43,6 +46,11 @@
 Proposed by & Arben Cela % Instructor/supervisor
 \end{tabular}
 \end{center}
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[scale=0.13]{img/rotary_inverted_pendulum.jpg}
+    \caption{Laboratory module \label{fig:laboratory_module}}
+\end{figure}
 
 % If you wish to include an abstract, uncomment the lines below
 % \begin{abstract}
@@ -78,14 +86,25 @@ The system is exceptionally non-linear due to the gravitational forces that affe
 
 \section{Model of a rotary pendulum}
 
-\begin{tabular}{ll}
-Mass of empty crucible & \SI{7.28}{\gram}\\
-Mass of crucible and magnesium before heating & \SI{8.59}{\gram}\\
-Mass of crucible and magnesium oxide after heating & \SI{9.46}{\gram}\\
-Balance used & \#4\\
-Magnesium from sample bottle & \#1
-\end{tabular}
+The non-linear equation are given by 
+\begin{dmath}\label{first_non_linear_equation_of_motion}
+    \displaystyle {\ddot {\theta }}_{1}\left(J_{1zz}+m_{1}l_{1}^{2}+m_{2}L_{1}^{2}+(J_{2yy}+m_{2}l_{2}^{2})\sin ^{2}(\theta _{2})+J_{2xx}\cos ^{2}(\theta _{2})\right)+{\ddot {\theta }}_{2}m_{2}L_{1}l_{2}\cos(\theta _{2})-m_{2}L_{1}l_{2}\sin(\theta _{2}){\dot {\theta }}_{2}^{2}+{\dot {\theta }}_{1}{\dot {\theta }}_{2}\sin(2\theta _{2})(m_{2}l_{2}^{2}+J_{2yy}-J_{2xx})+b_{1}{\dot {\theta }}_{1}=\tau _{1}
+\end{dmath}
 
+and 
+
+\begin{dmath}\label{second_non_linear_equation_of_motion}
+    \displaystyle {\ddot {\theta }}_{1}m_{2}L_{1}l_{2}\cos(\theta _{2})+{\ddot {\theta }}_{2}(m_{2}l_{2}^{2}+J_{2zz})+1/2{\dot {\theta }}_{1}^{2}\sin(2\theta _{2})(-m_{2}l_{2}^{2}-J_{2yy}+J_{2xx})+b_{2}{\dot {\theta }}_{2}+gm_{2}l_{2}\sin(\theta _{2})=\tau _{2}
+\end{dmath}
+
+
+These equations are required by Broyden's method, which is the method for developing non-linear mathematical models like in Figure \ref{fig:model_of_inverted_pendulum} on page \pageref{fig:model_of_inverted_pendulum}.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[scale=0.5]{img/Furuta_pendulum.jpg}
+    \caption{Model of Inverted Pendulum \label{fig:model_of_inverted_pendulum}}
+\end{figure}
 %----------------------------------------------------------------------------------------
 %	SECTION 3
 %----------------------------------------------------------------------------------------
